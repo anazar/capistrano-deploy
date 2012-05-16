@@ -12,7 +12,7 @@ module CapistranoDeploy
 
         namespace :deploy do
           desc 'seed the database'
-          task :seed do
+          task :seed, :roles => :db, :only => {:primary => true} do
             run "cd #{deploy_to} && RAILS_ENV=#{rails_env} #{rake} db:seed" unless 'production' == rails_env
           end
         end
