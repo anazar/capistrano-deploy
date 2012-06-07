@@ -15,6 +15,10 @@ module CapistranoDeploy
           task :seed, :roles => :db, :only => {:primary => true} do
             run "cd #{deploy_to} && RAILS_ENV=#{rails_env} #{rake} db:seed" unless 'production' == rails_env
           end
+
+          task :rollback, :roles => :db, :only => {:primary => true} do
+            run "cd #{deploy_to} && RAILS_ENV=#{rails_env} #{rake} db:rollback" unless 'production' == rails_env
+          end
         end
       end
     end
