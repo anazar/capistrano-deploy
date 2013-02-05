@@ -5,6 +5,8 @@ module CapistranoDeploy
         namespace :passenger_rolling do
           desc 'Restart passenger'
           task :restart, :except => { :no_release => true }, :once => true do
+            put "i am here"
+            logger.info "i am also here"
             find_servers(:roles => :app).each do |server|
               # 1 - Remove this appserver from the loadbalancer rotation
               logger.info "Blocking loadbalancer on #{server.host}"
