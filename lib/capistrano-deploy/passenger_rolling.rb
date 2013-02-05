@@ -5,6 +5,7 @@ module CapistranoDeploy
         namespace :passenger_rolling do
           desc 'Restart passenger'
           task :restart, :except => { :no_release => true }, :once => true do
+            binding.pry
             put "i am here"
             logger.info "i am also here"
             find_servers(:roles => :app).each do |server|
@@ -33,6 +34,8 @@ module CapistranoDeploy
             end
           end
         end
+
+        after 'deploy:restart', 'passenger_rolling:restart'        
       end
     end
   end
