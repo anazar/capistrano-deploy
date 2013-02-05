@@ -17,7 +17,7 @@ module CapistranoDeploy
               # 2 - Restart this appserver
               puts "Waiting for passenger to start on #{server.host}"
               run "touch #{deploy_to}/tmp/restart.txt", :hosts => server.host
-              run "curl https://localhost --header 'Host: subro.acdcorp.com' -ks > /dev/null", :hosts => server.host
+              run "curl #{curl_url}' -ks > /dev/null", :hosts => server.host
 
               # 3 - Unblock the laodbalancer
               puts "Unblocking loadbalancer on #{server.host}"
