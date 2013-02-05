@@ -5,9 +5,6 @@ module CapistranoDeploy
         namespace :passenger_rolling do
           desc 'Restart passenger'
           task :restart, :except => { :no_release => true }, :once => true do
-            binding.pry
-            put "i am here"
-            logger.info "i am also here"
             find_servers(:roles => :app).each do |server|
               # 1 - Remove this appserver from the loadbalancer rotation
               logger.info "Blocking loadbalancer on #{server.host}"
@@ -27,10 +24,9 @@ module CapistranoDeploy
               run "sudo mv /etc/httpd/conf.d/proxy_subro.acdcorp.com.conf /etc/httpd/conf.d/proxy_subro.acdcorp.com.conf.disabled", :hosts => server.host
               run "sudo mv /etc/httpd/conf.d/subro.acdcorp.com.conf.disabled /etc/httpd/conf.d/subro.acdcorp.com.conf", :hosts => server.host
               run "sudo /etc/init.d/httpd graceful", :hosts => server.host              
-              unless servers.last == server
-                logger.info "Sleeping for 5 seconds until LB notices #{server.host} is up again"
-                sleep(5)
-              end
+
+              sleep(5)
+
             end
           end
         end
