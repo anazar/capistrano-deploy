@@ -19,7 +19,7 @@ module CapistranoDeploy
               # 2 - Restart this appserver
               logger.info "Waiting for passenger to start on #{server.host}"
               run "touch #{deploy_to}/tmp/restart.txt", :hosts => server.host
-              run ("curl #{server.curl_url} -ks > /dev/null", :hosts => server.host) if server.curl_url
+              run("curl #{server.curl_url} -ks > /dev/null", :hosts => server.host) if server.curl_url
 
               # 3 - Unblock the laodbalancer
               if 'production' == rails_env              
