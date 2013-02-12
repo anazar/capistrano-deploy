@@ -23,7 +23,7 @@ module CapistranoDeploy
               # 3 - Unblock the laodbalancer
               if 'production' == rails_env   
                 if healthcheck_path
-                  logger.info "Blocking loadbalancer on #{server.host}"
+                  logger.info "Enabling loadbalancer on #{server.host}"
                   run "mv #{healthcheck_path}.backup #{healthcheck_path}", :hosts => server.host
                   sleep(40)
                 end
