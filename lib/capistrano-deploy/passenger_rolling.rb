@@ -25,7 +25,7 @@ module CapistranoDeploy
                 if healthcheck_path
                   logger.info "Enabling loadbalancer on #{server.host}"
                   run "mv #{healthcheck_path}.backup #{healthcheck_path}", :hosts => server.host
-                  sleep(40) unless servers.last == server
+                  sleep(40) unless find_servers(:roles => :app).last == server
                 end
               end              
             end
