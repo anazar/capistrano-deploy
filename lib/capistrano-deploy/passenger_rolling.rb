@@ -8,12 +8,11 @@ module CapistranoDeploy
             find_servers(:roles => :app).each do |server|
               # 1 - Remove this appserver from the loadbalancer rotation
               if 'production' == rails_env
-                logger.info "Blocking loadbalancer on #{server.host}"
-                run "sudo mv /etc/httpd/conf.d/subro.acdcorp.com.conf /etc/httpd/conf.d/subro.acdcorp.com.conf.disabled", :hosts => server.host
-                run "sudo mv /etc/httpd/conf.d/proxy_subro.acdcorp.com.conf.disabled /etc/httpd/conf.d/proxy_subro.acdcorp.com.conf", :hosts => server.host
-                run "sudo /etc/init.d/httpd graceful", :hosts => server.host
-                #puts "Sleeping for 5 seconds until LB notices #{server.host} is down"
-                sleep(5)
+                if healthcheck_path
+                  logger.info "Blocking loadbalancer on #{server.host}"
+                  run "mv #{healthcheck_path} #{healthcheck_path}.backup", :hosts => server.host
+                  sleep(40)
+                end
               end
 
               # 2 - Restart this appserver
@@ -22,14 +21,13 @@ module CapistranoDeploy
               run("curl #{server.options[:curl_url]} -ks > /dev/null", :hosts => server.host) if server.options.has_key?(:curl_url)
 
               # 3 - Unblock the laodbalancer
-              if 'production' == rails_env              
-                logger.info "Unblocking loadbalancer on #{server.host}"
-                run "sudo mv /etc/httpd/conf.d/proxy_subro.acdcorp.com.conf /etc/httpd/conf.d/proxy_subro.acdcorp.com.conf.disabled", :hosts => server.host
-                run "sudo mv /etc/httpd/conf.d/subro.acdcorp.com.conf.disabled /etc/httpd/conf.d/subro.acdcorp.com.conf", :hosts => server.host
-                run "sudo /etc/init.d/httpd graceful", :hosts => server.host 
-                sleep(5)
-              end
-
+              if 'production' == rails_env   
+                if healthcheck_path
+                  logger.info "Blocking loadbalancer on #{server.host}"
+                  run "mv #{healthcheck_path}.backup #{healthcheck_path}", :hosts => server.host
+                  sleep(40)
+                end
+              end              
             end
           end
         end
